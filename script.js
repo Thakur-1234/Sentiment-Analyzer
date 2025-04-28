@@ -35,7 +35,7 @@ function updateCharCount() {
     charCount.textContent = textInput.value.length;
 }
 
-function analyzeSentiment() {
+async function analyzeSentiment() {
     const text = textInput.value.trim();
     if (text === "") {
         showToast("Please enter some text to analyze.");
@@ -45,12 +45,28 @@ function analyzeSentiment() {
     loading.classList.remove('hidden');
     results.classList.add('hidden');
 
-    // Simulate sentiment analysis (replace with actual API call)
-    setTimeout(() => {
-        const sentimentData = mockSentimentAnalysis(text);
+    try {
+        const response = await fetch('http://localhost:5000/api/analyze', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ text: text })
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            showToast(errorData.error || "An error occurred");
+            return;
+        }
+
+        const sentimentData = await response.json();
         displayResults(sentimentData);
+    } catch (error) {
+        showToast("An error occurred while analyzing sentiment.");
+    } finally {
         loading.classList.add('hidden');
-    }, 1000);
+    }
 }
 
 function clearInput() {
@@ -81,11 +97,11 @@ function displayResults(data) {
 
     // Update sentiment badge
     sentimentBadge.classList.remove('positive', 'neutral', 'negative');
-    if (data.sentiment === 'positive') {
+    if (data.sentiment === 'Positive') {
         sentimentBadge.classList.add('positive');
         sentimentIcon.className = 'fas fa-smile';
         sentimentLabel.textContent = 'Positive';
-    } else if (data.sentiment === 'neutral') {
+    } else if (data.sentiment === 'Neutral') {
         sentimentBadge.classList.add('neutral');
         sentimentIcon.className = 'fas fa-meh';
         sentimentLabel.textContent = 'Neutral';
@@ -114,24 +130,4 @@ function showToast(message) {
     setTimeout(() => {
         toast.classList.add('hidden');
     }, 3000);
-}
-
-// Mock sentiment analysis function
-function mockSentimentAnalysis(text) {
-    // This is a placeholder for actual sentiment analysis logic
-    return {
-        text: text,
-        sentiment: 'positive', // Change this based on analysis
-        scores: {
-            compound: 0.5,
-            positive: 70,
-            neutral: 20,
-            negative: 10
-        }
-    };
-}
-
-// Dark mode toggle function
-function toggleDarkMode() {
-    document.body.classList.toggle('dark-mode');
 }
