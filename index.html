@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sentiment Analyzer</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+</head>
+<body>
+    <div class="theme-switch-wrapper">
+        <label class="theme-switch" for="checkbox">
+            <input type="checkbox" id="checkbox" />
+            <div class="slider round">
+                <i class="fas fa-sun"></i>
+                <i class="fas fa-moon"></i>
+            </div>
+        </label>
+        <span>Dark Mode</span>
+    </div>
+
+    <div class="container">
+        <header class="animate__animated animate__fadeIn">
+            <div class="logo-container">
+                <div class="logo">
+                    <i class="fas fa-brain"></i>
+                </div>
+            </div>
+            <h1>Sentiment Analyzer</h1>
+            <p>Discover the emotional tone behind your text</p>
+        </header>
+
+        <div class="input-section animate__animated animate__fadeInUp">
+            <div class="input-wrapper">
+                <textarea id="text-input" placeholder="Type or paste text here to analyze its sentiment..."></textarea>
+                <div class="character-counter">
+                    <span id="char-count">0</span> characters
+                </div>
+            </div>
+            <div class="button-group">
+                <button id="analyze-btn">
+                    <i class="fas fa-search"></i> Analyze Sentiment
+                </button>
+                <button id="clear-btn">
+                    <i class="fas fa-trash-alt"></i> Clear
+                </button>
+                <button id="sample-btn">
+                    <i class="fas fa-lightbulb"></i> Try Sample Text
+                </button>
+            </div>
+            <div class="shortcuts-info">
+                <p><span class="shortcut-key">Ctrl+Enter</span> to analyze | <span class="shortcut-key">Esc</span> to clear</p>
+            </div>
+        </div>
+
+        <div id="loading" class="hidden">
+            <div class="wave"></div>
+            <div class="wave"></div>
+            <div class="wave"></div>
+            <div class="wave"></div>
+            <div class="wave"></div>
+            <p>Analyzing your text...</p>
+        </div>
+
+        <div id="results" class="hidden animate__animated">
+            <div class="results-header">
+                <h2>Analysis Results</h2>
+                <button id="new-analysis-btn">New Analysis</button>
+            </div>
+            
+            <div class="text-preview card-effect">
+                <h3><i class="fas fa-quote-left"></i> Text Analyzed</h3>
+                <p id="analyzed-text"></p>
+            </div>
+
+            <div class="sentiment-result card-effect">
+                <h3><i class="fas fa-chart-bar"></i> Overall Sentiment</h3>
+                <div class="sentiment-badge" id="sentiment-badge">
+                    <div class="sentiment-icon-container">
+                        <i id="sentiment-icon" class="fas"></i>
+                    </div>
+                    <span id="sentiment-label"></span>
+                </div>
+            </div>
+
+            <div class="scores-container card-effect">
+                <h3><i class="fas fa-chart-line"></i> Sentiment Scores</h3>
+                
+                <div class="score-item">
+                    <div class="score-label tooltip">
+                        Compound Score
+                        <span class="tooltiptext">An overall sentiment score between -1 (very negative) and 1 (very positive)</span>
+                    </div>
+                    <div class="compound-meter">
+                        <div class="compound-marker" id="compound-marker"></div>
+                        <div class="compound-value" id="compound-score">0</div>
+                        <div class="compound-scale">
+                            <span>-1</span>
+                            <span>0</span>
+                            <span>1</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="score-bars">
+                    <div class="score-bar-item">
+                        <div class="score-label tooltip">
+                            Positive
+                            <span class="tooltiptext">Percentage of positive sentiment detected</span>
+                        </div>
+                        <div class="score-bar-container">
+                            <div class="score-bar positive-bar" id="positive-bar">
+                                <span class="score-value" id="positive-score">0%</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="score-bar-item">
+                        <div class="score-label tooltip">
+                            Neutral
+                            <span class="tooltiptext">Percentage of neutral sentiment detected</span>
+                        </div>
+                        <div class="score-bar-container">
+                            <div class="score-bar neutral-bar" id="neutral-bar">
+                                <span class="score-value" id="neutral-score">0%</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="score-bar-item">
+                        <div class="score-label tooltip">
+                            Negative
+                            <span class="tooltiptext">Percentage of negative sentiment detected</span>
+                        </div>
+                        <div class="score-bar-container">
+                            <div class="score-bar negative-bar" id="negative-bar">
+                                <span class="score-value" id="negative-score">0%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="history-section card-effect">
+                <h3><i class="fas fa-history"></i> Analysis History</h3>
+                <div id="history-list"></div>
+            </div>
+        </div>
+
+        <footer class="animate__animated animate__fadeIn">
+            <p>© 2025 Sentiment Analysis Tool | Powered by NLTK VADER</p>
+            <div class="social-icons">
+                <a href="#" class="social-icon"><i class="fab fa-github"></i></a>
+                <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+                <a href="#" class="social-icon"><i class="fab fa-linkedin"></i></a>
+            </div>
+        </footer>
+    </div>
+
+    <div id="toast" class="toast hidden">
+        <div class="toast-content">
+            <i id="toast-icon" class="fas"></i>
+            <div class="toast-message" id="toast-message"></div>
+        </div>
+        <div class="toast-progress"></div>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>
